@@ -1,0 +1,8 @@
+Package: cppconformal
+Type: Package
+Title: cppconformal - an implementation of conformal regression with Rcpp
+Version: 1.0
+Author: Gioele Cerri
+License: GPL (>= 2)
+Imports: Rcpp (>= 1.0.5), RcppEigen
+LinkingTo: Rcpp, RcppEigen

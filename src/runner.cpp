@@ -29,8 +29,6 @@ List run_linear_conformal(
         for(int i = 0; i < n0; i++) {
             for (int j = 0; j < grid_size; j++) {
                 double y0 = y_grid(j);
-                #pragma omp critical
-                std::cout << i << " " << j << "\n";
                 regression_matrix.row(n) = X0.row(i);
                 regression_vector(n) = y0;
 

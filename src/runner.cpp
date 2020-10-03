@@ -37,7 +37,6 @@ List run_linear_conformal(
                 VectorXd fitted_values = model.predict(regression_matrix);
                 ArrayXd residuals = (regression_vector - fitted_values).array().abs();
 
-                std::cout << i << " " << j << "\n";
                 p_values(i, j) = (residuals > residuals(n)).count() / (n+1.0);
             }
         }

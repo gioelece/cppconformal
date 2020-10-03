@@ -5,10 +5,10 @@
 #include <RcppEigen.h>
 #include "linear_regr.hpp"
 
-using namespace Eigen;
+using namespace Rcpp;
 
 // [[Rcpp::export]]
-Eigen::MatrixXd run_linear_conformal(
+List run_linear_conformal(
     Eigen::MatrixXd const & X, Eigen::VectorXd const & y, Eigen::MatrixXd const & X0,
     int grid_size = 500, double grid_param = 1.25
 );

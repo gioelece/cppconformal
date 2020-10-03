@@ -1,7 +1,6 @@
 #include "runner.hpp"
-#include "Eigen/src/Core/VectorBlock.h"
 
-MatrixXd run_linear_conformal(
+List run_linear_conformal(
     MatrixXd const & X, VectorXd const & y, MatrixXd const & X0,
     int grid_size, double grid_param
 ) {
@@ -45,5 +44,7 @@ MatrixXd run_linear_conformal(
             }
         }
     }
-    return p_values;
+
+    return List::create(Named("y_grid") = y_grid, 
+                        Named("p_values") = p_values);
 }

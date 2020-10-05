@@ -5,10 +5,10 @@ using namespace Eigen;
 
 class LinearRegression {
     public:
-    void fit(MatrixXd const & X, VectorXd const & y);
-    VectorXd predict(MatrixXd const & X0);
+    void fit(MatrixXd const & X, MatrixXd const & y);
+    MatrixXd predict(MatrixXd const & X0);
 
     private:
-    VectorXd beta;
+    MatrixXd beta;
 }; 
 #endif

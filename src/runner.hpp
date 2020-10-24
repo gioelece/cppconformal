@@ -2,7 +2,7 @@
 #define __RUNNER_HPP
 #include <tuple>
 #include <cmath>
-#include <optional>
+#include <omp.h>
 #include <Rcpp.h>
 #include <RcppEigen.h>
 #include "linear_regr.hpp"

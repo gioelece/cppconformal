@@ -19,31 +19,42 @@ MatrixXd run_conformal_on_grid(
     MatrixXd const & y_grid
 ) {
     const int n = X.rows(), n0 = X0.rows(),
-              p = X.cols(), d = y.cols();
+              p = X.cols(), d = y.cols(),
+              num_threads = omp_get_max_threads();
     // Create a matrix containing the p-values
     MatrixXd p_values = MatrixXd::Zero(n0, y_grid.rows());
+    // Create a matrix and a vector for the regression model ("y = X \beta + \varepsilon"),
+    // adding (for each thread) a row which will contain the point x0 and the corresponding y0 being tested.
+    // Its initial value does not really matter, it will be immediately overriden.
+    MatrixXd regression_matrix(n + num_threads, p);
+    MatrixXd regression_vector(n + num_threads, d);
+    regression_matrix << X, MatrixXd::Zero(num_threads, p);
+    regression_vector << y, MatrixXd::Zero(num_threads, d);
 
     #pragma omp parallel
     {
-        // Create a matrix and a vector for the regression model ("y = X \beta + \varepsilon"),
-        // adding a row which will contain the point x0 and the corresponding y0 being tested.
-        // Its initial value does not really matter, it will be immediately overriden.
-        MatrixXd regression_matrix(n + 1, p);
-        MatrixXd regression_vector(n + 1, d);
-        regression_matrix << X, MatrixXd::Zero(1, p);
-        regression_vector << y, MatrixXd::Zero(1, d);
+        int this_thread = omp_get_thread_num();
+        SparseMatrix<double> reduction_matrix(n + 1, n + num_threads);
+        reduction_matrix.reserve(VectorXi::Ones(n + num_threads));
+        for (int i = 0; i < n; i++) {
+            reduction_matrix.insert(i, i) = 1;
+        }
+        reduction_matrix.insert(n, n + this_thread) = 1;
 
         #pragma omp for collapse(2)
         for(int i = 0; i < n0; i++) {
             for (int j = 0; j < y_grid.rows(); j++) {
                 VectorXd y0 = y_grid.row(j);
-                regression_matrix.row(n) = X0.row(i);
-                regression_vector.row(n) = y0;
+                regression_matrix.row(n + this_thread) = X0.row(i);
+                regression_vector.row(n + this_thread) = y0;
 
                 Model model(initial_model);
-                model.fit(regression_matrix, regression_vector);
-                MatrixXd fitted_values = model.predict(regression_matrix);
-                ArrayXd residuals = (regression_vector - fitted_values).rowwise().norm().array();
+                auto thread_regression_matrix = reduction_matrix * regression_matrix;
+                auto thread_regression_vector = reduction_matrix * regression_vector;
+                
+                model.fit(thread_regression_matrix, thread_regression_vector);
+                MatrixXd fitted_values = model.predict(thread_regression_matrix);
+                ArrayXd residuals = (thread_regression_vector - fitted_values).rowwise().norm().array();
 
                 p_values(i, j) = (residuals > residuals(n)).count() / (n+1.0);
             }

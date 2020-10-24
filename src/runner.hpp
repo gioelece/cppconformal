@@ -8,9 +8,19 @@
 #include "linear_regr.hpp"
 
 using namespace Rcpp;
+using namespace Eigen;
+
+// Remark: Rcpp does not work if the Eigen namespace is removed from exported definitions.
 
 // [[Rcpp::export]]
 Eigen::MatrixXd build_grid(Eigen::VectorXd const & ylim, int grid_size);
+
+template<class Model>
+MatrixXd run_conformal_on_grid(
+    Model const & initial_model,
+    MatrixXd const & X, MatrixXd const & y, MatrixXd const & X0,
+    MatrixXd const & y_grid
+);
 
 // [[Rcpp::export]]
 List run_linear_conformal(

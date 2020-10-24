@@ -11,21 +11,18 @@ MatrixXd build_grid(VectorXd const & ylim, int grid_size) {
     return y_grid;
 }
 
-List run_linear_conformal(
+
+template<class Model>
+MatrixXd run_conformal_on_grid(
+    Model const & initial_model,
     MatrixXd const & X, MatrixXd const & y, MatrixXd const & X0,
-    int grid_size, double grid_param
+    MatrixXd const & y_grid
 ) {
-    Eigen::initParallel();
     const int n = X.rows(), n0 = X0.rows(),
               p = X.cols(), d = y.cols();
-
-    // Create a vector containing the grid points that will be tested
-    const VectorXd ylim = grid_param * y.array().abs().colwise().maxCoeff();
-    const MatrixXd y_grid = build_grid(ylim, grid_size);
-
     // Create a matrix containing the p-values
     MatrixXd p_values = MatrixXd::Zero(n0, y_grid.rows());
-    
+
     #pragma omp parallel
     {
         // Create a matrix and a vector for the regression model ("y = X \beta + \varepsilon"),
@@ -43,7 +40,7 @@ List run_linear_conformal(
                 regression_matrix.row(n) = X0.row(i);
                 regression_vector.row(n) = y0;
 
-                LinearRegression model;
+                Model model(initial_model);
                 model.fit(regression_matrix, regression_vector);
                 MatrixXd fitted_values = model.predict(regression_matrix);
                 ArrayXd residuals = (regression_vector - fitted_values).rowwise().norm().array();
@@ -52,6 +49,21 @@ List run_linear_conformal(
             }
         }
     }
+
+    return p_values;
+}
+
+
+List run_linear_conformal(
+    MatrixXd const & X, MatrixXd const & y, MatrixXd const & X0,
+    int grid_size, double grid_param
+) {
+    // Create a vector containing the grid points that will be tested
+    const VectorXd ylim = grid_param * y.array().abs().colwise().maxCoeff();
+    const MatrixXd y_grid = build_grid(ylim, grid_size);
+
+    LinearRegression model;
+    MatrixXd p_values = run_conformal_on_grid(model, X, y, X0, y_grid);
 
     return List::create(Named("y_grid") = y_grid, 
                         Named("p_values") = p_values);

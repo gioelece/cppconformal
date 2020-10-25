@@ -53,16 +53,55 @@ MatrixXd run_conformal_on_grid(
 }
 
 
-List run_linear_conformal(
+List run_linear_conformal_single_grid(
     MatrixXd const & X, MatrixXd const & y, MatrixXd const & X0,
     int grid_size, double grid_param
 ) {
-    // Create a vector containing the grid points that will be tested
     const VectorXd ylim = grid_param * y.array().abs().colwise().maxCoeff();
     const Grid grid(-ylim, ylim, grid_size);
 
     LinearRegression model;
     MatrixXd p_values = run_conformal_on_grid(model, X, y, X0, grid);
+
+    return List::create(Named("y_grid") = grid.collect(), 
+                        Named("p_values") = p_values);
+}
+
+
+Grid create_new_grid_from_pvalues(
+    const Grid & old_grid, const RowVectorXd & p_values, double min_value, int new_grid_size
+) {
+    // TODO: check that there is at least a point with p >= min_value
+    ArrayXd start = old_grid.get_end_point(), end = old_grid.get_start_point(),
+            step_increment = old_grid.get_step_increment();
+        
+    for (int i = 0; i < old_grid.get_size(); i++) {
+        if (p_values(i) >= min_value) {
+            start = start.min(old_grid.get_point(i).array() - step_increment);
+            end = end.max(old_grid.get_point(i).array() + step_increment);
+        }
+    }
+
+    return Grid(start, end, new_grid_size);
+}
+
+
+// REMARK: multi_grid accepts only a single X0
+List run_linear_conformal_multi_grid(
+    MatrixXd const & X, MatrixXd const & y, RowVectorXd const & X0,
+    VectorXd grid_levels, VectorXd grid_sizes, double initial_grid_param
+) {
+    const VectorXd initial_ylim = initial_grid_param * y.array().abs().colwise().maxCoeff();
+    Grid grid(-initial_ylim, initial_ylim, grid_sizes[0]);
+
+    LinearRegression model;
+    RowVectorXd p_values;
+
+    for (int i = 0; i < grid_levels.size(); i++) {
+        p_values = run_conformal_on_grid(model, X, y, X0, grid);
+        grid = create_new_grid_from_pvalues(grid, p_values, grid_levels[i], grid_sizes[i+1]);
+        std::cout << "start: " << grid.get_start_point() << ", end: " << grid.get_end_point() << std::endl;
+    }
 
     return List::create(Named("y_grid") = grid.collect(), 
                         Named("p_values") = p_values);

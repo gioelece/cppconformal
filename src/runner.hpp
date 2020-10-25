@@ -5,15 +5,13 @@
 #include <omp.h>
 #include <Rcpp.h>
 #include <RcppEigen.h>
+#include "grid.hpp"
 #include "linear_regr.hpp"
 
 using namespace Rcpp;
 using namespace Eigen;
 
-// Remark: Rcpp does not work if the Eigen namespace is removed from exported definitions.
-
-// [[Rcpp::export]]
-Eigen::MatrixXd build_grid(Eigen::VectorXd const & ylim, int grid_size);
+// Remark: Rcpp does not work if the Eigen namespace is omitted from exported definitions.
 
 template<class Model>
 MatrixXd run_conformal_on_grid(

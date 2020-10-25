@@ -1,28 +1,16 @@
 #include "runner.hpp"
 
-MatrixXd build_grid(VectorXd const & ylim, int grid_size) {
-    const int d = ylim.size();
-    MatrixXd y_grid = MatrixXd::Zero(pow(grid_size, d), d);
-    for (int i = 0; i < d; i++) {
-        MatrixXd tmp = VectorXd::LinSpaced(grid_size, -ylim(i), ylim(i)) \
-            .replicate(pow(grid_size, i), pow(grid_size, d-i-1)).transpose();
-        y_grid.col(i) << Map<VectorXd>(tmp.data(), pow(grid_size, d));
-    }
-    return y_grid;
-}
-
-
 template<class Model>
 MatrixXd run_conformal_on_grid(
     Model const & initial_model,
     MatrixXd const & X, MatrixXd const & y, MatrixXd const & X0,
-    MatrixXd const & y_grid
+    Grid const & grid
 ) {
     const int n = X.rows(), n0 = X0.rows(),
               p = X.cols(), d = y.cols(),
               num_threads = omp_get_max_threads();
     // Create a matrix containing the p-values
-    MatrixXd p_values = MatrixXd::Zero(n0, y_grid.rows());
+    MatrixXd p_values = MatrixXd::Zero(n0, grid.get_size());
     // Create a matrix and a vector for the regression model ("y = X \beta + \varepsilon"),
     // adding (for each thread) a row which will contain the point x0 and the corresponding y0 being tested.
     // Its initial value does not really matter, it will be immediately overriden.
@@ -43,8 +31,8 @@ MatrixXd run_conformal_on_grid(
 
         #pragma omp for collapse(2)
         for(int i = 0; i < n0; i++) {
-            for (int j = 0; j < y_grid.rows(); j++) {
-                VectorXd y0 = y_grid.row(j);
+            for (int j = 0; j < grid.get_size(); j++) {
+                VectorXd y0 = grid.get_point(j);
                 regression_matrix.row(n + this_thread) = X0.row(i);
                 regression_vector.row(n + this_thread) = y0;
 
@@ -71,11 +59,11 @@ List run_linear_conformal(
 ) {
     // Create a vector containing the grid points that will be tested
     const VectorXd ylim = grid_param * y.array().abs().colwise().maxCoeff();
-    const MatrixXd y_grid = build_grid(ylim, grid_size);
+    const Grid grid(-ylim, ylim, grid_size);
 
     LinearRegression model;
-    MatrixXd p_values = run_conformal_on_grid(model, X, y, X0, y_grid);
+    MatrixXd p_values = run_conformal_on_grid(model, X, y, X0, grid);
 
-    return List::create(Named("y_grid") = y_grid, 
+    return List::create(Named("y_grid") = grid.collect(), 
                         Named("p_values") = p_values);
 }

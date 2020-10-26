@@ -8,7 +8,7 @@ using namespace Eigen;
 class Grid {
     public:
     Grid(const VectorXd & s, const VectorXd & e, int g) :
-        start_point(s), end_point(e), grid_points_on_each_axis(g),
+        start_point(s), end_point(e), grid_side(g),
         d(s.size())
     {
         compute_step_increment();
@@ -33,7 +33,7 @@ class Grid {
     VectorXd start_point;
     VectorXd end_point;
     VectorXd step_increment;
-    int grid_points_on_each_axis;
+    int grid_side;
     int d;
 };
 

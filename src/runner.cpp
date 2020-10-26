@@ -119,7 +119,6 @@ List run_conformal_multi_grid(
     for (int i = 0; i < grid_levels.size(); i++) {
         p_values = run_conformal_on_grid(model, X, y, X0, grid);
         grid = create_new_grid_from_pvalues(grid, p_values, grid_levels[i], grid_sizes[i+1]);
-        std::cout << "start: " << grid.get_start_point() << ", end: " << grid.get_end_point() << std::endl;
     }
 
     return List::create(Named("y_grid") = grid.collect(), 

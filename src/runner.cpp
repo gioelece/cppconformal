@@ -1,10 +1,11 @@
 #include "runner.hpp"
+#include "linear_regr.hpp"
 
 template<class Model>
 MatrixXd run_conformal_on_grid(
-    Model const & initial_model,
-    MatrixXd const & X, MatrixXd const & y, MatrixXd const & X0,
-    Grid const & grid
+    const Model & initial_model,
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
+    const Grid & grid
 ) {
     const int n = X.rows(), n0 = X0.rows(),
               p = X.cols(), d = y.cols(),
@@ -53,18 +54,36 @@ MatrixXd run_conformal_on_grid(
 }
 
 
-List run_linear_conformal_single_grid(
-    MatrixXd const & X, MatrixXd const & y, MatrixXd const & X0,
+template<class Model>
+List run_conformal_single_grid(
+    const Model & model,
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
     int grid_size, double grid_param
 ) {
     const VectorXd ylim = grid_param * y.array().abs().colwise().maxCoeff();
     const Grid grid(-ylim, ylim, grid_size);
-
-    LinearRegression model;
     MatrixXd p_values = run_conformal_on_grid(model, X, y, X0, grid);
 
     return List::create(Named("y_grid") = grid.collect(), 
                         Named("p_values") = p_values);
+}
+
+
+List run_linear_conformal_single_grid(
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
+    int grid_size, double grid_param
+) {
+    LinearRegression model;
+    return run_conformal_single_grid(model, X, y, X0, grid_size, grid_param);
+}
+
+
+List run_ridge_conformal_single_grid(
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
+    double lambda, int grid_size, double grid_param
+) {
+    RidgeRegression model(lambda);
+    return run_conformal_single_grid(model, X, y, X0, grid_size, grid_param);
 }
 
 
@@ -86,15 +105,15 @@ Grid create_new_grid_from_pvalues(
 }
 
 
-// REMARK: multi_grid accepts only a single X0
-List run_linear_conformal_multi_grid(
-    MatrixXd const & X, MatrixXd const & y, RowVectorXd const & X0,
-    VectorXd grid_levels, VectorXd grid_sizes, double initial_grid_param
+template<class Model>
+List run_conformal_multi_grid(
+    const Model & model,
+    const MatrixXd & X, const MatrixXd & y, const RowVectorXd & X0,
+    const VectorXd & grid_levels, const VectorXd & grid_sizes, double initial_grid_param
 ) {
     const VectorXd initial_ylim = initial_grid_param * y.array().abs().colwise().maxCoeff();
     Grid grid(-initial_ylim, initial_ylim, grid_sizes[0]);
 
-    LinearRegression model;
     RowVectorXd p_values;
 
     for (int i = 0; i < grid_levels.size(); i++) {
@@ -105,4 +124,22 @@ List run_linear_conformal_multi_grid(
 
     return List::create(Named("y_grid") = grid.collect(), 
                         Named("p_values") = p_values);
+}
+
+
+List run_linear_conformal_multi_grid(
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
+    const VectorXd & grid_levels, const VectorXd & grid_sizes, double initial_grid_param
+) {
+    LinearRegression model;
+    return run_conformal_multi_grid(model, X, y, X0, grid_levels, grid_sizes, initial_grid_param);
+}
+
+
+List run_ridge_conformal_multi_grid(
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0, double lambda,
+    const VectorXd & grid_levels, const VectorXd & grid_sizes, double initial_grid_param
+) {
+    RidgeRegression model(lambda);
+    return run_conformal_multi_grid(model, X, y, X0, grid_levels, grid_sizes, initial_grid_param);
 }

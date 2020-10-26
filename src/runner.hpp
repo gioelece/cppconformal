@@ -15,25 +15,51 @@ using namespace Eigen;
 
 template<class Model>
 MatrixXd run_conformal_on_grid(
-    Model const & initial_model,
-    MatrixXd const & X, MatrixXd const & y, MatrixXd const & X0,
-    MatrixXd const & y_grid
+    const Model & initial_model,
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
+    const Grid & grid
+);
+
+template<class Model>
+List run_conformal_single_grid(
+    const Model & model,
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
+    int grid_size, double grid_param
 );
 
 // [[Rcpp::export]]
 List run_linear_conformal_single_grid(
-    Eigen::MatrixXd const & X, Eigen::MatrixXd const & y, Eigen::MatrixXd const & X0,
-    int grid_size = 500, double grid_param = 1.25
+    const Eigen::MatrixXd & X, const Eigen::MatrixXd & y, const Eigen::MatrixXd & X0,
+    int grid_size, double grid_param
+);
+
+// [[Rcpp::export]]
+List run_ridge_conformal_single_grid(
+    const Eigen::MatrixXd & X, const Eigen::MatrixXd & y, const Eigen::MatrixXd & X0,
+    double lambda, int grid_size, double grid_param
 );
 
 Grid create_new_grid_from_pvalues(
-    const Grid & old_grid, const VectorXd & p_values, double min_value, int new_grid_size
+    const Grid & old_grid, const RowVectorXd & p_values, double min_value, int new_grid_size
+);
+
+// Remark: multi_grid accepts only a single X0
+template<class Model>
+List run_conformal_multi_grid(
+    const Model & model,
+    const Eigen::MatrixXd & X, const Eigen::MatrixXd & y, const Eigen::RowVectorXd & X0,
+    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sizes, double initial_grid_param
 );
 
 // [[Rcpp::export]]
 List run_linear_conformal_multi_grid(
-    Eigen::MatrixXd const & X, Eigen::MatrixXd const & y, Eigen::RowVectorXd const & X0,
-    Eigen::VectorXd grid_levels, Eigen::VectorXd grid_sizes,
-    double initial_grid_param
+    const Eigen::MatrixXd & X, const Eigen::MatrixXd & y, const Eigen::MatrixXd & X0,
+    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sizes, double initial_grid_param
+);
+
+// [[Rcpp::export]]
+List run_ridge_conformal_multi_grid(
+    const Eigen::MatrixXd & X, const Eigen::MatrixXd & y, const Eigen::MatrixXd & X0, double lambda,
+    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sizes, double initial_grid_param
 );
 #endif

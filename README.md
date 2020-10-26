@@ -25,7 +25,7 @@ To sample the response space, for the `single_grid` function family, a uniform g
 
 Instead, when using a `*_multi_grid` function, an initial "coarse" grid is created as before, with parameters `initial_grid_param` and `grid_sizes[0]`. Then a subgrid of size `grid_size[1]` is created to contain all the points (from the previous grid) where the value of $p$ is greater or equal than `grid_levels[0]`. Note that, in order to use these functions, one needs to have a single `X0`, i.e. $n_0 = 1$.
 
-Let $g = d ^ n$ be the total number of grid points. The functions return a R list with `grid` ($g \times d$), containing the sampled points, and `p_values` ($n_0 \times g$), containing the corresponding p-values for each `X0`. For `*_multi_grid` functions, only the values referring to the last grid are returned.
+Let $g = grid_size ^ d$ be the total number of grid points. The functions return a R list with `grid` ($g \times d$), containing the sampled points, and `p_values` ($n_0 \times g$), containing the corresponding p-values for each `X0`. For `*_multi_grid` functions, only the values referring to the last grid are returned.
 
 **Remark**: the intercept coefficient is not included in the prediction. To have a "typical" linear regression, one needs to add to `X` a column of ones.
 

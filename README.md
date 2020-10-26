@@ -10,10 +10,22 @@ devtools::install_github('gioelece/cppconformal')
 
 ## How to use
 
-One can call `run_linear_conformal(X, Y, X0, grid_size=150, grid_param=1.25)`:
-where `X` ($n \times p$ matrix) contains the covariates, `Y` ($n \times d$) is the matrix of the corresponding observed values, and one wants to construct a confidence interval for the response to the covariates `X0` ($n_0 \times p$).
+The library exports in R the following functions:
+```R
+run_linear_conformal_single_grid(X, y, X0, grid_size, grid_param)
+run_ridge_conformal_single_grid(X, y, X0, lambda, grid_size, grid_param)
+run_linear_conformal_multi_grid(X, y, X0, grid_levels, grid_sizes, initial_grid_param)
+run_ridge_conformal_multi_grid(X, y, X0, lambda, grid_levels, grid_sizes, initial_grid_param)
+```
 
-To sample the response space, a uniform grid is created. The limits of the grid for the $i$-th axis are `-limit_i` to `+limit_i` where `limit_i = grid_param * max(abs(y_i))`, with `grid_size` points.
+For example, one can call `run_linear_conformal(X, Y, X0, grid_size=150, grid_param=1.25)`:
+`X` ($n \times p$ matrix) contains the covariates, `Y` ($n \times d$) is the matrix of the corresponding observed values, and one wants to construct a confidence interval for the response to the covariates `X0` ($n_0 \times p$).
+
+To sample the response space, for the `single_grid` function family, a uniform grid is created. The limits of the grid for the $i$-th axis are `-limit_i` to `+limit_i` where `limit_i = grid_param * max(abs(y_i))`, with `grid_size` points for each dimension.
+
+Instead, when using a `*_multi_grid` function, an initial "coarse" grid is created as before, with parameters `initial_grid_param` and `grid_sizes[0]`. Then a subgrid of size `grid_size[1]` is created to contain all the points (from the previous grid) where the value of $p$ is greater or equal than `grid_levels[0]`. Note that, in order to use these functions, one needs to have a single `X0`, i.e. $n_0 = 1$.
+
+Let $g = d ^ n$ be the total number of grid points. The functions return a R list with `grid` ($g \times d$), containing the sampled points, and `p_values` ($n_0 \times g$), containing the corresponding p-values for each `X0`. For `*_multi_grid` functions, only the values referring to the last grid are returned.
 
 **Remark**: the intercept coefficient is not included in the prediction. To have a "typical" linear regression, one needs to add to `X` a column of ones.
 

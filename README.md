@@ -19,8 +19,8 @@ To sample the response space, a uniform grid is created. The limits of the grid 
 
 ## References
 
-Nouretdinov I, Gammerman J, Fontana M, Rehal D. _Multi-level conformal clustering: A distribution-free technique for clustering and anomaly detection._ Neurocomputing. 2020;397:279-291. doi:10.1016/j.neucom.2019.07.114
-
 Zeni G, Fontana M, Vantini S. _Conformal Prediction: a Unified Review of Theory and New Challenges._ arXiv:200507972 [cs, econ, stat]. Published online May 16, 2020. Accessed October 26, 2020. http://arxiv.org/abs/2005.07972
 
 Vovk V, Gammerman A, Shafer G. _Algorithmic Learning in a Random World._ Springer; 2005.
+
+Nouretdinov I, Gammerman J, Fontana M, Rehal D. _Multi-level conformal clustering: A distribution-free technique for clustering and anomaly detection._ Neurocomputing. 2020;397:279-291. doi:10.1016/j.neucom.2019.07.114

@@ -25,7 +25,7 @@ class Grid {
     };
 
     int get_size() const;
-    VectorXd get_point(int i) const;
+    VectorXd get_point(int point_idx) const;
     MatrixXd collect() const;
 
     private:

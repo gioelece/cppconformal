@@ -7,6 +7,13 @@ MatrixXd run_conformal_on_grid(
     const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
     const Grid & grid
 ) {
+    if (X.cols() != X0.cols()) {
+        stop("X.cols() != X0.cols(), but they must be equal (to p)")
+    }
+    if (X.rows() != y.rows()) {
+        stop("X.rows() != y.rows(), but they must be equal (to n)")
+    }
+
     const int n = X.rows(), n0 = X0.rows(),
               p = X.cols(), d = y.cols(),
               num_threads = omp_get_max_threads();
@@ -90,7 +97,6 @@ List run_ridge_conformal_single_grid(
 Grid create_new_grid_from_pvalues(
     const Grid & old_grid, const RowVectorXd & p_values, double min_value, int new_grid_side
 ) {
-    // TODO: check that there is at least a point with p >= min_value
     ArrayXd start = old_grid.get_end_point(), end = old_grid.get_start_point(),
             step_increment = old_grid.get_step_increment();
         
@@ -101,6 +107,10 @@ Grid create_new_grid_from_pvalues(
         }
     }
 
+    if ((start == old_grid.get_end_point().array()).all() && (end == old_grid.get_start_point().array()).all()) {
+        stop("No point with p-value min_value = %d found", min_value);
+    }
+
     return Grid(start, end, new_grid_side);
 }
 
@@ -108,9 +118,13 @@ Grid create_new_grid_from_pvalues(
 template<class Model>
 List run_conformal_multi_grid(
     const Model & model,
-    const MatrixXd & X, const MatrixXd & y, const RowVectorXd & X0,
+    const MatrixXd & X, const MatrixXd & y, const MatrixXd & X0,
     const VectorXd & grid_levels, const VectorXd & grid_sides, double initial_grid_param
 ) {
+    if (X0.rows() != 1) {
+        stop("You must pass a single X0 point to multi_grid functions");
+    }
+
     const VectorXd initial_ylim = initial_grid_param * y.array().abs().colwise().maxCoeff();
     Grid grid(-initial_ylim, initial_ylim, grid_sides[0]);
 

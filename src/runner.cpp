@@ -8,10 +8,10 @@ MatrixXd run_conformal_on_grid(
     const Grid & grid
 ) {
     if (X.cols() != X0.cols()) {
-        stop("X.cols() != X0.cols(), but they must be equal (to p)")
+        stop("X.cols() != X0.cols(), but they must be equal (to p)");
     }
     if (X.rows() != y.rows()) {
-        stop("X.rows() != y.rows(), but they must be equal (to n)")
+        stop("X.rows() != y.rows(), but they must be equal (to n)");
     }
 
     const int n = X.rows(), n0 = X0.rows(),

@@ -30,13 +30,13 @@ List run_conformal_single_grid(
 // [[Rcpp::export]]
 List run_linear_conformal_single_grid(
     const Eigen::MatrixXd & X, const Eigen::MatrixXd & y, const Eigen::MatrixXd & X0,
-    int grid_side, double grid_param
+    int grid_side = 500, double grid_param = 1.25
 );
 
 // [[Rcpp::export]]
 List run_ridge_conformal_single_grid(
     const Eigen::MatrixXd & X, const Eigen::MatrixXd & y, const Eigen::MatrixXd & X0,
-    double lambda, int grid_side, double grid_param
+    double lambda, int grid_side = 500, double grid_param = 1.25
 );
 
 Grid create_new_grid_from_pvalues(

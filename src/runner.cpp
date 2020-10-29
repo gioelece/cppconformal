@@ -97,7 +97,6 @@ List run_ridge_conformal_single_grid(
 Grid create_new_grid_from_pvalues(
     const Grid & old_grid, const RowVectorXd & p_values, double min_value, int new_grid_side
 ) {
-    // TODO: check that there is at least a point with p >= min_value
     ArrayXd start = old_grid.get_end_point(), end = old_grid.get_start_point(),
             step_increment = old_grid.get_step_increment();
         

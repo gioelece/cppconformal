@@ -31,6 +31,10 @@ List run_conformal_multi_grid(
         stop("You must pass a single X0 point to multi_grid functions");
     }
 
+    if (grid_levels.size() + 1 != grid_sides.size()) {
+        stop("grid_sides must be one item longer than grid_levels");
+    }
+
     const VectorXd initial_ylim = initial_grid_param * Y.array().abs().colwise().maxCoeff();
     Grid grid(-initial_ylim, initial_ylim, grid_sides[0]);
 

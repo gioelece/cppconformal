@@ -34,6 +34,7 @@ Grid create_new_grid_from_pvalues(
     \param X0 a single point containing the values for the independent variables
     \param grid_levels minimum value of p-values to use at each grid refinement
     \param grid_sides number of points for each side of the grid, for each grid refinement
+        (must be one item longer than grid_levels)
     \param initial_grid_param determines the initial size of the grid
     \return An Rcpp list with the following members:
     - `y_grid`: matrix with the coordinates of grid points in the space of the covariates

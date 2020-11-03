@@ -134,7 +134,8 @@ List run_conformal_multi_grid(
         p_values = run_conformal_on_grid(model, X, Y, X0, grid);
         grid = create_new_grid_from_pvalues(grid, p_values, grid_levels[i], grid_sides[i+1]);
     }
-
+    p_values = run_conformal_on_grid(model, X, Y, X0, grid);
+    
     return List::create(Named("y_grid") = grid.collect(), 
                         Named("p_values") = p_values);
 }

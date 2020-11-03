@@ -36,3 +36,6 @@
 compile_flags.txt
 src/RcppExports.cpp
 R/RcppExports.R
+docs/
+
+*.example.png

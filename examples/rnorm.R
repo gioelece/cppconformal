@@ -5,18 +5,22 @@ library(devtools)
 # (useful for development).
 devtools::load_all()
 
-X0 = 5
-X = rnorm(200, sd=10)
+X0 = t(c(5, 1))
+X = cbind(
+    rnorm(200, sd=10),
+    rnorm(200, sd=10)
+)
 y = cbind(
-    X + rnorm(200, sd=1),
-    2 * X + rnorm(200, sd=1)
+    X[, 1] + rnorm(200, sd=1),
+    2 * X[, 1] + rnorm(200, sd=1)
 )
 
-# res = run_linear_conformal_single_grid(as.matrix(X), y, as.matrix(X0))
-res = run_linear_conformal_multi_grid(
-    as.matrix(X), y, as.matrix(X0),
-    c(0.8, 0.9, 0.95), c(500, 500, 500, 500), 1.25
-)
+res = run_linear_conformal_single_grid(as.matrix(X), y, as.matrix(X0))
+# Or else, for example
+# res = run_linear_conformal_multi_grid(
+#     X, y, as.matrix(X0),
+#     c(0.8, 0.9, 0.95), c(500, 500, 500, 500), 1.25
+# )
 
 grid = res$y_grid
 p_values = res$p_values[1, ]
@@ -33,4 +37,4 @@ ggplot(data = df, aes(x = y1, y = y2, z = p_values)) +
     ylim(min(df_large_p$y2), max(df_large_p$y2)) +
     stat_contour() +
     scale_fill_continuous()
-ggsave("example.png")
+ggsave("rnorm.example.png")

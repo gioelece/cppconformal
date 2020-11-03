@@ -1,4 +1,4 @@
-#include "multi_grid.hpp"
+#include "multi_grid_model.hpp"
 
 Grid create_new_grid_from_pvalues(
     const Grid & old_grid, const RowVectorXd & p_values, double min_value, int new_grid_side

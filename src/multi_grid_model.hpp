@@ -1,9 +1,9 @@
-#ifndef __MULTI_GRID_HPP
-#define __MULTI_GRID_HPP
+#ifndef __MULTI_GRID_MODEL_HPP
+#define __MULTI_GRID_MODEL_HPP
 #include <RcppEigen.h>
 #include "grid.hpp"
 #include "linear_regr.hpp"
-#include "runner.hpp"
+#include "single_grid_model.hpp"
 
 using namespace Rcpp;
 using namespace Eigen;

@@ -1,9 +1,7 @@
-#ifndef __RUNNER_HPP
-#define __RUNNER_HPP
-#include <tuple>
+#ifndef __SINGLE_GRID_HPP
+#define __SINGLE_GRID_HPP
 #include <cmath>
 #include <omp.h>
-#include <Rcpp.h>
 #include <RcppEigen.h>
 #include "grid.hpp"
 #include "linear_regr.hpp"

@@ -1,4 +1,4 @@
-#include "runner.hpp"
+#include "single_grid_model.hpp"
 
 template<class Model>
 MatrixXd run_conformal_on_grid(

@@ -1,4 +1,4 @@
-# cppconformal
+# cppconformal {#mainpage}
 
 An implementation of conformal regression with Rcpp.
 

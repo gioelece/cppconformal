@@ -16,12 +16,14 @@ y = cbind(
     2 * X[, 1] + rnorm(200, sd=sd)
 )
 
+
 res = run_linear_conformal_single_grid(as.matrix(X), y, as.matrix(Xhat))
 # Or else, for example
 # res = run_linear_conformal_multi_grid(
 #     X, y, as.matrix(Xhat),
-#     c(0.8, 0.9, 0.95), c(500, 500, 500, 500), 1.25
+#     c(0.01, 0.03), c(20, 40, 500), 1.25
 # )
+# In that case, we would have access to res$y_grid_parameters
 
 grid = res$y_grid
 p_values = res$p_values[1, ]

@@ -26,7 +26,7 @@ Xhat = rbind(c(0, 1)) # Boys
 
 res = run_linear_conformal_multi_grid(
     X, Y, Xhat,
-    c(0.7, 0.8, 0.9, 0.95), c(20, 10, 10, 10, 100), 1.00
+    c(0.02, 0.05), c(20, 10, 100), 1.00
 )
 
 grid = res$y_grid
@@ -35,12 +35,12 @@ df = data.frame(
     y1 = grid[, 1], y2 = grid[, 2], p_values = p_values
 )
 
-df_large_p = df[df$p_values > 0.8, ]
+df_large_p = df[df$p_values > 0.05, ]
 
 ggplot(data = df_large_p, aes(x = y1, y = y2, z = p_values)) +
     geom_tile(aes(fill = p_values)) +
     # xlim(min(df_large_p$y1), max(df_large_p$y1)) +
     # ylim(min(df_large_p$y2), max(df_large_p$y2)) +
-    stat_contour() +
+    stat_contour(breaks = c(0.05)) +
     scale_fill_continuous()
 ggsave("growth.example.png")

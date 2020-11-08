@@ -35,6 +35,7 @@ List run_conformal_multi_grid(
         stop("grid_sides must be one item longer than grid_levels");
     }
 
+    std::vector<List> grid_parameters;
     const VectorXd initial_ylim = initial_grid_param * Y.array().abs().colwise().maxCoeff();
     Grid grid(-initial_ylim, initial_ylim, grid_sides[0]);
 
@@ -43,10 +44,13 @@ List run_conformal_multi_grid(
     for (int i = 0; i < grid_levels.size(); i++) {
         p_values = run_conformal_on_grid(model, X, Y, Xhat, grid);
         grid = create_new_grid_from_pvalues(grid, p_values, grid_levels[i], grid_sides[i+1]);
+        grid_parameters.push_back(grid.get_parameters_as_list());
     }
+
     p_values = run_conformal_on_grid(model, X, Y, Xhat, grid);
     
     return List::create(Named("y_grid") = grid.collect(), 
+                        Named("y_grid_parameters") = grid_parameters,
                         Named("p_values") = p_values);
 }
 

@@ -39,6 +39,8 @@ Grid create_new_grid_from_pvalues(
     \return An Rcpp list with the following members:
     - `y_grid`: matrix with the coordinates of grid points in the space of the covariates
     - `p_values`: p-values corresponding to those grid points
+    - `y_grid_parameters`: vector with the history of grid parameters (start point, end point, grid side)
+        for each tried grid
 */
 template<class Model>
 List run_conformal_multi_grid(

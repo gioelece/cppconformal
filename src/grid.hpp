@@ -45,6 +45,12 @@ class Grid {
         return step_increment;
     };
 
+    /*! Get number of points for each side of the grid.
+    */  
+    int get_grid_side() const {
+        return grid_side;
+    };
+
     /*! Get the size of the grid.
         \return The number of grid points for this grid
     */  

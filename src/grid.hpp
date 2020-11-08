@@ -1,9 +1,11 @@
 #ifndef __GRID_HPP
 #define __GRID_HPP
 #include <vector>
-#include <Eigen/Core>
+#include <Rcpp.h>
+#include <RcppEigen.h>
 
 using namespace Eigen;
+using Rcpp::List;
 
 /*! Class holding a (hyper-)rectangular grid, that avoids storing in memory the coordinates of each point.
 */  
@@ -58,6 +60,11 @@ class Grid {
         \return The point coordinates 
     */  
     MatrixXd collect() const;
+
+    /*! Get the parameters of the grid as an Rcpp list
+        \return A Rcpp list
+    */
+    List get_parameters_as_list() const;
 
     private:
     void compute_step_increment();

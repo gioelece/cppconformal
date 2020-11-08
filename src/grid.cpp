@@ -1,4 +1,5 @@
 #include "grid.hpp"
+using Rcpp::Named;
 
 int Grid::get_size() const {
     return pow(grid_side, d);
@@ -26,4 +27,10 @@ MatrixXd Grid::collect() const {
         y_grid.row(i) = get_point(i);
     }
     return y_grid;
+}
+
+List Grid::get_parameters_as_list() const {
+    return List::create(Named("start_point") = start_point,
+                        Named("end_point") = end_point,
+                        Named("grid_side") = grid_side);
 }

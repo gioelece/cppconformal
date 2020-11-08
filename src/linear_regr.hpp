@@ -9,15 +9,15 @@ using namespace Eigen;
 class LinearRegressionBase {
     public:
     /*! Use a fitted linear regression model to make a prediction
-        \param X0 matrix of independent variables
-        \returns prediction of Y corresponding to X0
+        \param Xhat matrix of independent variables
+        \returns prediction of Y corresponding to Xhat
     */
     template<typename Derived>
-    MatrixXd predict(const MatrixBase<Derived> & X0) {
+    MatrixXd predict(const MatrixBase<Derived> & Xhat) {
         if (!is_fitted) {
             Rcpp::stop("Linear model has not been fitted yet");
         }
-        return X0 * beta;
+        return Xhat * beta;
     }
 
     protected:

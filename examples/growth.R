@@ -22,10 +22,10 @@ Y_girls = t(growth$hgtf[age_selection, ])
 X = rbind(X_boys, X_girls)
 Y = rbind(Y_boys, Y_girls)
 
-X0 = rbind(c(0, 1)) # Boys
+Xhat = rbind(c(0, 1)) # Boys
 
 res = run_linear_conformal_multi_grid(
-    X, Y, X0,
+    X, Y, Xhat,
     c(0.7, 0.8, 0.9, 0.95), c(20, 10, 10, 10, 100), 1.00
 )
 

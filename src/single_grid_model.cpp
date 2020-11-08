@@ -3,23 +3,23 @@
 template<class Model>
 MatrixXd run_conformal_on_grid(
     const Model & initial_model,
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & X0,
+    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     const Grid & grid
 ) {
-    if (X.cols() != X0.cols()) {
-        stop("X.cols() != X0.cols(), but they must be equal (to p)");
+    if (X.cols() != Xhat.cols()) {
+        stop("X.cols() != Xhat.cols(), but they must be equal (to p)");
     }
     if (X.rows() != Y.rows()) {
         stop("X.rows() != y.rows(), but they must be equal (to n)");
     }
 
-    const int n = X.rows(), n0 = X0.rows(),
+    const int n = X.rows(), n0 = Xhat.rows(),
               p = X.cols(), d = Y.cols(),
               num_threads = omp_get_max_threads();
     // Create a matrix containing the p-values
     MatrixXd p_values = MatrixXd::Zero(n0, grid.get_size());
     // Create a matrix and a vector for the regression model ("y = X \beta + \varepsilon"),
-    // adding (for each thread) a row which will contain the point x0 and the corresponding y0 being tested.
+    // adding (for each thread) a row which will contain the point Xhat and the corresponding y0 being tested.
     // Its initial value does not really matter, it will be immediately overriden.
     MatrixXd regression_matrix(n + num_threads, p);
     MatrixXd regression_vector(n + num_threads, d);
@@ -40,7 +40,7 @@ MatrixXd run_conformal_on_grid(
         for(int i = 0; i < n0; i++) {
             for (int j = 0; j < grid.get_size(); j++) {
                 VectorXd y0 = grid.get_point(j);
-                regression_matrix.row(n + this_thread) = X0.row(i);
+                regression_matrix.row(n + this_thread) = Xhat.row(i);
                 regression_vector.row(n + this_thread) = y0;
 
                 Model model(initial_model);
@@ -63,12 +63,12 @@ MatrixXd run_conformal_on_grid(
 template<class Model>
 List run_conformal_single_grid(
     const Model & model,
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & X0,
+    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     int grid_side, double grid_param
 ) {
     const VectorXd ylim = grid_param * Y.array().abs().colwise().maxCoeff();
     const Grid grid(-ylim, ylim, grid_side);
-    MatrixXd p_values = run_conformal_on_grid(model, X, Y, X0, grid);
+    MatrixXd p_values = run_conformal_on_grid(model, X, Y, Xhat, grid);
 
     return List::create(Named("y_grid") = grid.collect(), 
                         Named("p_values") = p_values);
@@ -76,18 +76,18 @@ List run_conformal_single_grid(
 
 
 List run_linear_conformal_single_grid(
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & X0,
+    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     int grid_side, double grid_param
 ) {
     LinearRegression model;
-    return run_conformal_single_grid(model, X, Y, X0, grid_side, grid_param);
+    return run_conformal_single_grid(model, X, Y, Xhat, grid_side, grid_param);
 }
 
 
 List run_ridge_conformal_single_grid(
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & X0,
+    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     double lambda, int grid_side, double grid_param
 ) {
     RidgeRegression model(lambda);
-    return run_conformal_single_grid(model, X, Y, X0, grid_side, grid_param);
+    return run_conformal_single_grid(model, X, Y, Xhat, grid_side, grid_param);
 }

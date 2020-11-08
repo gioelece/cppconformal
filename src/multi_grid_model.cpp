@@ -24,11 +24,11 @@ Grid create_new_grid_from_pvalues(
 template<class Model>
 List run_conformal_multi_grid(
     const Model & model,
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & X0,
+    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     const VectorXd & grid_levels, const VectorXd & grid_sides, double initial_grid_param
 ) {
-    if (X0.rows() > 1) {
-        stop("You must pass a single X0 point to multi_grid functions");
+    if (Xhat.rows() > 1) {
+        stop("You must pass a single Xhat point to multi_grid functions");
     }
 
     if (grid_levels.size() + 1 != grid_sides.size()) {
@@ -41,10 +41,10 @@ List run_conformal_multi_grid(
     RowVectorXd p_values;
 
     for (int i = 0; i < grid_levels.size(); i++) {
-        p_values = run_conformal_on_grid(model, X, Y, X0, grid);
+        p_values = run_conformal_on_grid(model, X, Y, Xhat, grid);
         grid = create_new_grid_from_pvalues(grid, p_values, grid_levels[i], grid_sides[i+1]);
     }
-    p_values = run_conformal_on_grid(model, X, Y, X0, grid);
+    p_values = run_conformal_on_grid(model, X, Y, Xhat, grid);
     
     return List::create(Named("y_grid") = grid.collect(), 
                         Named("p_values") = p_values);
@@ -52,18 +52,18 @@ List run_conformal_multi_grid(
 
 
 List run_linear_conformal_multi_grid(
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & X0,
+    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     const VectorXd & grid_levels, const VectorXd & grid_sides, double initial_grid_param
 ) {
     LinearRegression model;
-    return run_conformal_multi_grid(model, X, Y, X0, grid_levels, grid_sides, initial_grid_param);
+    return run_conformal_multi_grid(model, X, Y, Xhat, grid_levels, grid_sides, initial_grid_param);
 }
 
 
 List run_ridge_conformal_multi_grid(
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & X0, double lambda,
+    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat, double lambda,
     const VectorXd & grid_levels, const VectorXd & grid_sides, double initial_grid_param
 ) {
     RidgeRegression model(lambda);
-    return run_conformal_multi_grid(model, X, Y, X0, grid_levels, grid_sides, initial_grid_param);
+    return run_conformal_multi_grid(model, X, Y, Xhat, grid_levels, grid_sides, initial_grid_param);
 }

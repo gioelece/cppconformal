@@ -24,14 +24,14 @@ Grid create_new_grid_from_pvalues(
 );
 
 /*! Run a conformal algorithm with multi grid refinement,
-    computing a confidence region for the covariates corresponding to `X0`.
+    computing a confidence region for the covariates corresponding to `Xhat`.
 
-    __Remark__: multi_grid accepts only a single `X0`
+    __Remark__: multi_grid accepts only a single `Xhat`
 
     \param model model to use as a base for conformal regression (will be copied at each run)
     \param X matrix of the independent variables
     \param Y matrix of the covariates
-    \param X0 a single point containing the values for the independent variables
+    \param Xhat a single point containing the values for the independent variables
     \param grid_levels minimum value of p-values to use at each grid refinement
     \param grid_sides number of points for each side of the grid, for each grid refinement
         (must be one item longer than grid_levels)
@@ -43,7 +43,7 @@ Grid create_new_grid_from_pvalues(
 template<class Model>
 List run_conformal_multi_grid(
     const Model & model,
-    const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & X0,
+    const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & Xhat,
     const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param
 );
 
@@ -52,7 +52,7 @@ List run_conformal_multi_grid(
 */
 // [[Rcpp::export]]
 List run_linear_conformal_multi_grid(
-    const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & X0,
+    const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & Xhat,
     const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param
 );
 
@@ -63,7 +63,7 @@ List run_linear_conformal_multi_grid(
 */
 // [[Rcpp::export]]
 List run_ridge_conformal_multi_grid(
-    const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & X0, double lambda,
+    const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & Xhat, double lambda,
     const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param
 );
 #endif

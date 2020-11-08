@@ -5,7 +5,7 @@ library(devtools)
 # (useful for development).
 devtools::load_all()
 
-X0 = t(c(5, 1))
+Xhat = t(c(5, 1))
 X = cbind(
     rnorm(200, sd=10),
     rnorm(200, sd=10)
@@ -16,10 +16,10 @@ y = cbind(
     2 * X[, 1] + rnorm(200, sd=sd)
 )
 
-res = run_linear_conformal_single_grid(as.matrix(X), y, as.matrix(X0))
+res = run_linear_conformal_single_grid(as.matrix(X), y, as.matrix(Xhat))
 # Or else, for example
 # res = run_linear_conformal_multi_grid(
-#     X, y, as.matrix(X0),
+#     X, y, as.matrix(Xhat),
 #     c(0.8, 0.9, 0.95), c(500, 500, 500, 500), 1.25
 # )
 

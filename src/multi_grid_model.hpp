@@ -1,6 +1,7 @@
 /*! @file */
 #ifndef __MULTI_GRID_MODEL_HPP
 #define __MULTI_GRID_MODEL_HPP
+#include <iostream>
 #include <RcppEigen.h>
 #include "grid.hpp"
 #include "linear_regr.hpp"
@@ -46,7 +47,8 @@ template<class Model>
 List run_conformal_multi_grid(
     const Model & model,
     const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & Xhat,
-    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param
+    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param,
+    bool print_progress = false
 );
 
 /*! Run a conformal algorithm with automatic multi grid refinement and linear regression model.
@@ -55,7 +57,8 @@ List run_conformal_multi_grid(
 // [[Rcpp::export]]
 List run_linear_conformal_multi_grid(
     const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & Xhat,
-    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param
+    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param,
+    bool print_progress = false
 );
 
 /*! Run a conformal algorithm with automatic multi grid refinement and ridge regression model.
@@ -66,6 +69,7 @@ List run_linear_conformal_multi_grid(
 // [[Rcpp::export]]
 List run_ridge_conformal_multi_grid(
     const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & Xhat, double lambda,
-    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param
+    const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param,
+    bool print_progress = false
 );
 #endif

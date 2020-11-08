@@ -42,7 +42,8 @@ List run_conformal_multi_grid(
 
     RowVectorXd p_values;
 
-    for (int i = 0; i < grid_levels.size(); i++) {
+    int i;
+    for (i = 0; i < grid_levels.size(); i++) {
         if (print_progress) {
             std::cout << "Running conformal on grid " << i <<
                 " (grid_side = " << grid.get_grid_side() << ")" << std::endl;
@@ -53,7 +54,7 @@ List run_conformal_multi_grid(
         grid_parameters.push_back(grid.get_parameters_as_list());
     }
 
-    std::cout << "Running conformal on last grid " <<
+    std::cout << "Running conformal on grid " << i <<
                 " (grid_side = " << grid.get_grid_side() << ")" << std::endl;
     p_values = run_conformal_on_grid(model, X, Y, Xhat, grid);
     

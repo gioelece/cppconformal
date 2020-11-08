@@ -6,6 +6,8 @@
 #include "../grid.hpp"
 #include "single_grid.hpp"
 
+/*! Implementation of a multi-grid conformal algorithm
+*/
 class MultiGridAlgorithm {
     public:
     /*! Use the p-values from a previous run of the algorithm to identify the areas with p-values greater or equal to min_value,
@@ -23,8 +25,9 @@ class MultiGridAlgorithm {
     /*! Run a conformal algorithm with multi grid refinement,
         computing a confidence region for the covariates corresponding to `Xhat`.
 
-        __Remark__: multi_grid accepts only a single `Xhat`
+        __Remark__: multi_grid accepts only a single `Xhat`.
 
+        \param InnerAlgorithm class to use as inner, single-grid algorithm
         \param model model to use as a base for conformal regression (will be copied at each run)
         \param X matrix of the independent variables
         \param Y matrix of the covariates

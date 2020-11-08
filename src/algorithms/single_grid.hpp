@@ -9,6 +9,8 @@
 using Rcpp::stop;
 using Rcpp::Named;
 
+/*! Implementation of a single-grid conformal algorithm
+*/
 class SingleGridAlgorithm {
     public:
     /*! Run a conformal algorithm on a @ref Grid instance.

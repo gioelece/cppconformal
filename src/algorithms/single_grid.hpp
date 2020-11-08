@@ -1,7 +1,58 @@
-#include "single_grid_model.hpp"
+/*! @file */
+#ifndef __ALGORITHMS__SINGLE_GRID_HPP
+#define __ALGORITHMS__SINGLE_GRID_HPP
+#include <cmath>
+#include <omp.h>
+#include <RcppEigen.h>
+#include "../grid.hpp"
+
+using Rcpp::stop;
+using Rcpp::Named;
+
+class SingleGridAlgorithm {
+    public:
+    /*! Run a conformal algorithm on a @ref Grid instance.
+
+        \param model model to use as a base for conformal regression (will be copied at each run)
+        \param X matrix of the independent variables
+        \param Y matrix of the covariates
+        \param Xhat a matrix containing multiple points to use as values for the independent variables
+        \param grid grid instance
+        \return An Rcpp list with the following members:
+        - `y_grid`: matrix with the coordinates of grid points in the space of the covariates
+        - `p_values`: p-values corresponding to those grid points
+    */
+    template<class Model>
+    MatrixXd run_on_grid(
+        const Model & initial_model,
+        const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
+        const Grid & grid
+    );
+
+    /*! Run a conformal algorithm with a simple grid,
+        computing a confidence region for the covariates corresponding to `Xhat`.
+
+        \param model model to use as a base for conformal regression (will be copied at each run)
+        \param X matrix of the independent variables
+        \param Y matrix of the covariates
+        \param Xhat a matrix containing multiple points to use as values for the independent variables
+        \param grid_side number of points for each side of the grid
+        \param initial_grid_param determines the initial size of the grid
+        \return An Rcpp list with the following members:
+        - `y_grid`: matrix with the coordinates of grid points in the space of the covariates
+        - `p_values`: p-values corresponding to those grid points
+    */
+    template<class Model>
+    List run(
+        const Model & model,
+        const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
+        int grid_side, double grid_param
+    );
+};
+
 
 template<class Model>
-MatrixXd run_conformal_on_grid(
+MatrixXd SingleGridAlgorithm::run_on_grid(
     const Model & initial_model,
     const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     const Grid & grid
@@ -61,33 +112,17 @@ MatrixXd run_conformal_on_grid(
 
 
 template<class Model>
-List run_conformal_single_grid(
+List SingleGridAlgorithm::run(
     const Model & model,
     const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     int grid_side, double grid_param
 ) {
     const VectorXd ylim = grid_param * Y.array().abs().colwise().maxCoeff();
     const Grid grid(-ylim, ylim, grid_side);
-    MatrixXd p_values = run_conformal_on_grid(model, X, Y, Xhat, grid);
+    MatrixXd p_values = run_on_grid(model, X, Y, Xhat, grid);
 
     return List::create(Named("y_grid") = grid.collect(), 
                         Named("p_values") = p_values);
 }
 
-
-List run_linear_conformal_single_grid(
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
-    int grid_side, double grid_param
-) {
-    LinearRegression model;
-    return run_conformal_single_grid(model, X, Y, Xhat, grid_side, grid_param);
-}
-
-
-List run_ridge_conformal_single_grid(
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
-    double lambda, int grid_side, double grid_param
-) {
-    RidgeRegression model(lambda);
-    return run_conformal_single_grid(model, X, Y, Xhat, grid_side, grid_param);
-}
+#endif

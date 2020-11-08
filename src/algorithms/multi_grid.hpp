@@ -6,7 +6,8 @@
 #include "../grid.hpp"
 #include "single_grid.hpp"
 
-/*! Implementation of a multi-grid conformal algorithm
+/*! Implementation of a multi-grid conformal algorithm.
+*   It uses an "inner" single-grid algorithm at each step to recursively select a subgrid.
 */
 class MultiGridAlgorithm {
     public:
@@ -36,6 +37,7 @@ class MultiGridAlgorithm {
         \param grid_sides number of points for each side of the grid, for each grid refinement
             (must be one item longer than grid_levels)
         \param initial_grid_param determines the initial size of the grid
+        \param print_progress print to stdout every run of the inner algorithm.
         \return An Rcpp list with the following members:
         - `y_grid`: matrix with the coordinates of grid points in the space of the covariates
         - `p_values`: p-values corresponding to those grid points

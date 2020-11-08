@@ -26,7 +26,8 @@ Xhat = rbind(c(0, 1)) # Boys
 
 res = run_linear_conformal_multi_grid(
     X, Y, Xhat,
-    c(0.02, 0.05), c(20, 10, 100), 1.00
+    c(0.02, 0.05), c(20, 10, 100), 1.00,
+    print_progress = TRUE
 )
 
 grid = res$y_grid

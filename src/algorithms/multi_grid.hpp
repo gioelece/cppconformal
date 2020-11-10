@@ -47,8 +47,8 @@ class MultiGridAlgorithm {
     template<class Model, class InnerAlgorithm = SingleGridAlgorithm>
     List run(
         const Model & model,
-        const Eigen::MatrixXd & X, const Eigen::MatrixXd & Y, const Eigen::MatrixXd & Xhat,
-        const Eigen::VectorXd & grid_levels, const Eigen::VectorXd & grid_sides, double initial_grid_param,
+        const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
+        const VectorXd & grid_levels, const VectorXd & grid_sides, double initial_grid_param,
         bool print_progress = false
     );
 };

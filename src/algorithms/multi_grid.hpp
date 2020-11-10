@@ -93,6 +93,7 @@ List MultiGridAlgorithm::run(
     std::vector<List> grid_parameters;
     const VectorXd initial_ylim = initial_grid_param * Y.array().abs().colwise().maxCoeff();
     Grid grid(-initial_ylim, initial_ylim, grid_sides[0]);
+    grid_parameters.push_back(grid.get_parameters_as_list());
 
     InnerAlgorithm inner_algorithm;
     RowVectorXd p_values;

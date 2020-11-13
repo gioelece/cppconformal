@@ -3,6 +3,7 @@
 #define __ALGORITHMS__SINGLE_GRID_HPP
 #include <cmath>
 #include <omp.h>
+#include <random>
 #include <RcppEigen.h>
 #include "../grid.hpp"
 
@@ -79,6 +80,10 @@ MatrixXd SingleGridAlgorithm::run_on_grid(
     regression_matrix << X, MatrixXd::Zero(num_threads, p);
     regression_vector << Y, MatrixXd::Zero(num_threads, d);
 
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> uniform(0.0,1.0);
+    double tie_breaking = uniform(generator);
+
     #pragma omp parallel
     {
         int this_thread = omp_get_thread_num();
@@ -104,7 +109,10 @@ MatrixXd SingleGridAlgorithm::run_on_grid(
                 MatrixXd fitted_values = model.predict(thread_regression_matrix);
                 ArrayXd residuals = (thread_regression_vector - fitted_values).rowwise().norm().array();
 
-                p_values(i, j) = (residuals > residuals(n)).count() / (n+1.0);
+                p_values(i, j) = (
+                    (residuals > residuals(n)).count()
+                    + tie_breaking * (residuals == residuals(n)).count()
+                ) / (n+1.0);
             }
         }
     }

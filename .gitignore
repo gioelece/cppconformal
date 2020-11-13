@@ -40,3 +40,6 @@ docs/
 
 Rplots.pdf
 *.example.png
+
+.Rhistory
+.Rdata

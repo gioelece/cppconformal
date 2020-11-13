@@ -12,8 +12,16 @@ using Rcpp::Named;
 
 /*! Implementation of a single-grid conformal algorithm
 */
+template<class Model>
 class SingleGridAlgorithm {
     public:
+    /*! Construct a SingleGridAlgorithm instance
+        \param grid_side number of points for each side of the grid
+        \param grid_param determines the size of the grid
+    */
+    SingleGridAlgorithm(int _grid_side, double _grid_param) :
+        grid_side(_grid_side), grid_param(_grid_param) {};
+    
     /*! Run a conformal algorithm on a @ref Grid instance.
 
         \param model model to use as a base for conformal regression (will be copied at each run)
@@ -25,8 +33,7 @@ class SingleGridAlgorithm {
         - `y_grid`: matrix with the coordinates of grid points in the space of the covariates
         - `p_values`: p-values corresponding to those grid points
     */
-    template<class Model>
-    MatrixXd run_on_grid(
+    static MatrixXd run_on_grid(
         const Model & initial_model,
         const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
         const Grid & grid
@@ -39,23 +46,23 @@ class SingleGridAlgorithm {
         \param X matrix of the independent variables
         \param Y matrix of the covariates
         \param Xhat a matrix containing multiple points to use as values for the independent variables
-        \param grid_side number of points for each side of the grid
-        \param initial_grid_param determines the initial size of the grid
         \return An Rcpp list with the following members:
         - `y_grid`: matrix with the coordinates of grid points in the space of the covariates
         - `p_values`: p-values corresponding to those grid points
     */
-    template<class Model>
     List run(
         const Model & model,
-        const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
-        int grid_side, double grid_param
-    );
+        const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat
+    ) const;
+
+    private:
+    int grid_side;
+    double grid_param;
 };
 
 
 template<class Model>
-MatrixXd SingleGridAlgorithm::run_on_grid(
+MatrixXd SingleGridAlgorithm<Model>::run_on_grid(
     const Model & initial_model,
     const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
     const Grid & grid
@@ -122,11 +129,10 @@ MatrixXd SingleGridAlgorithm::run_on_grid(
 
 
 template<class Model>
-List SingleGridAlgorithm::run(
+List SingleGridAlgorithm<Model>::run(
     const Model & model,
-    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
-    int grid_side, double grid_param
-) {
+    const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat
+) const {
     const VectorXd ylim = grid_param * Y.array().abs().colwise().maxCoeff();
     const Grid grid(-ylim, ylim, grid_side);
     MatrixXd p_values = run_on_grid(model, X, Y, Xhat, grid);

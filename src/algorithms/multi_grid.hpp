@@ -110,8 +110,10 @@ List MultiGridAlgorithm::run(
         grid_parameters.push_back(grid.get_parameters_as_list());
     }
 
-    std::cout << "Running conformal on grid " << i <<
-                " (grid_side = " << grid.get_grid_side() << ")" << std::endl;
+    if (print_progress) {
+        std::cout << "Running conformal on grid " << i <<
+                    " (grid_side = " << grid.get_grid_side() << ")" << std::endl;
+    }
     p_values = inner_algorithm.run_on_grid(model, X, Y, Xhat, grid);
     
     return List::create(Named("y_grid") = grid.collect(), 

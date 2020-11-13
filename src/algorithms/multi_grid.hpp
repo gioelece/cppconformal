@@ -57,21 +57,31 @@ class MultiGridAlgorithm {
 Grid MultiGridAlgorithm::create_new_grid_from_pvalues(
     const Grid & old_grid, const RowVectorXd & p_values, double min_value, int new_grid_side
 ) {
-    ArrayXd start = old_grid.get_end_point(), end = old_grid.get_start_point(),
+    const ArrayXd old_start = old_grid.get_start_point(), old_end = old_grid.get_end_point(),
             step_increment = old_grid.get_step_increment();
+    bool point_found = false;
+    ArrayXd start, end;
         
     for (int i = 0; i < old_grid.get_size(); i++) {
         if (p_values(i) >= min_value) {
-            start = start.min(old_grid.get_point(i).array() - step_increment);
-            end = end.max(old_grid.get_point(i).array() + step_increment);
+            ArrayXd coords = old_grid.get_point(i).array();
+            if (point_found) {
+                start = start.min(coords - step_increment);
+                end = end.max(coords + step_increment);
+            } else {
+                start = coords - step_increment;
+                end = coords + step_increment;
+            }
+
+            point_found = true;
         }
     }
 
-    if ((start == old_grid.get_end_point().array()).all() && (end == old_grid.get_start_point().array()).all()) {
+    if (!point_found) {
         stop("No point over min_value = %d found", min_value);
     }
 
-    return Grid(start, end, new_grid_side);
+    return Grid(start.max(old_start), end.min(old_end), new_grid_side);
 }
 
 
@@ -102,7 +112,10 @@ List MultiGridAlgorithm::run(
     for (i = 0; i < grid_levels.size(); i++) {
         if (print_progress) {
             std::cout << "Running conformal on grid " << i <<
-                " (grid_side = " << grid.get_grid_side() << ")" << std::endl;
+                " (grid_side = " << grid.get_grid_side() <<
+                ", start_point = " << grid.get_start_point().transpose() <<
+                ", end_point = " << grid.get_end_point().transpose() <<
+                ")" << std::endl;
         }
 
         p_values = inner_algorithm.run_on_grid(model, X, Y, Xhat, grid);
@@ -112,7 +125,10 @@ List MultiGridAlgorithm::run(
 
     if (print_progress) {
         std::cout << "Running conformal on grid " << i <<
-                    " (grid_side = " << grid.get_grid_side() << ")" << std::endl;
+            " (grid_side = " << grid.get_grid_side() <<
+            ", start_point = " << grid.get_start_point().transpose() <<
+            ", end_point = " << grid.get_end_point().transpose() <<
+            ")" << std::endl;
     }
     p_values = inner_algorithm.run_on_grid(model, X, Y, Xhat, grid);
     

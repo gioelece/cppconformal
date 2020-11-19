@@ -9,23 +9,27 @@
 /*! Implementation of a multi-grid conformal algorithm.
 *   It uses an "inner" single-grid algorithm at each step to recursively select a subgrid.
 */
-template<class Model, class InnerAlgorithm = SingleGridAlgorithm<Model>>
-class MultiGridAlgorithm {
+template<class Model>
+class MultiGridAlgorithm : public AlgorithmBase<Model> {
     public:
     /*! Construct a MultiGridAlgorithm instance
         \param grid_levels minimum value of p-values to use at each grid refinement
         \param grid_sides number of points for each side of the grid, for each grid refinement
             (must be one item longer than grid_levels)
         \param initial_grid_param determines the initial size of the grid
+        \param inner_algorithm inner algorithm to use
         \param print_progress print to stdout every run of the inner algorithm.
     */
     MultiGridAlgorithm(
         const VectorXd & _grid_levels, const VectorXd & _grid_sides,
-        double _initial_grid_param, bool _print_progress = false
+        double _initial_grid_param,
+        const SingleGridAlgorithm<Model> & _inner_algorithm,
+        bool _print_progress = false
     ) : 
         grid_levels(_grid_levels), grid_sides(_grid_sides),
         initial_grid_param(_initial_grid_param),
-        print_progress(_print_progress)
+        print_progress(_print_progress),
+        inner_algorithm(std::make_unique<SingleGridAlgorithm<Model>>(_inner_algorithm))
     {};
         
     /*! Use the p-values from a previous run of the algorithm to identify the areas with p-values greater or equal to min_value,
@@ -45,7 +49,6 @@ class MultiGridAlgorithm {
 
         __Remark__: multi_grid accepts only a single `Xhat`.
 
-        \param InnerAlgorithm class to use as inner, single-grid algorithm
         \param model model to use as a base for conformal regression (will be copied at each run)
         \param X matrix of the independent variables
         \param Y matrix of the covariates
@@ -59,17 +62,18 @@ class MultiGridAlgorithm {
     List run(
         const Model & model,
         const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat
-    ) const;
+    ) override;
 
     private:
     VectorXd grid_levels;
     VectorXd grid_sides;
     double initial_grid_param;
     bool print_progress;
+    std::unique_ptr<SingleGridAlgorithm<Model>> inner_algorithm;
 };
 
-template<class Model, class InnerAlgorithm>
-Grid MultiGridAlgorithm<Model, InnerAlgorithm>::create_new_grid_from_pvalues(
+template<class Model>
+Grid MultiGridAlgorithm<Model>::create_new_grid_from_pvalues(
     const Grid & old_grid, const RowVectorXd & p_values, double min_value, int new_grid_side
 ) {
     const ArrayXd old_start = old_grid.get_start_point(), old_end = old_grid.get_end_point(),
@@ -100,11 +104,11 @@ Grid MultiGridAlgorithm<Model, InnerAlgorithm>::create_new_grid_from_pvalues(
 }
 
 
-template<class Model, class InnerAlgorithm>
-List MultiGridAlgorithm<Model, InnerAlgorithm>::run(
+template<class Model>
+List MultiGridAlgorithm<Model>::run(
     const Model & model,
     const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat
-) const {
+) {
     if (Xhat.rows() > 1) {
         stop("You must pass a single Xhat point to multi_grid functions");
     }
@@ -130,7 +134,7 @@ List MultiGridAlgorithm<Model, InnerAlgorithm>::run(
                 ")" << std::endl;
         }
 
-        p_values = InnerAlgorithm::run_on_grid(model, X, Y, Xhat, grid);
+        p_values = inner_algorithm->run_on_grid(model, X, Y, Xhat, grid);
         grid = create_new_grid_from_pvalues(grid, p_values, grid_levels[i], grid_sides[i+1]);
         grid_parameters.push_back(grid.get_parameters_as_list());
     }
@@ -142,7 +146,7 @@ List MultiGridAlgorithm<Model, InnerAlgorithm>::run(
             ", end_point = " << grid.get_end_point().transpose() <<
             ")" << std::endl;
     }
-    p_values = InnerAlgorithm::run_on_grid(model, X, Y, Xhat, grid);
+    p_values = inner_algorithm->run_on_grid(model, X, Y, Xhat, grid);
     
     return List::create(Named("y_grid") = grid.collect(), 
                         Named("y_grid_parameters") = grid_parameters,

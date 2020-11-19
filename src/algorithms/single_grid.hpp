@@ -6,6 +6,7 @@
 #include <random>
 #include <RcppEigen.h>
 #include "../grid.hpp"
+#include "base.hpp"
 
 using Rcpp::stop;
 using Rcpp::Named;
@@ -13,7 +14,7 @@ using Rcpp::Named;
 /*! Implementation of a single-grid conformal algorithm
 */
 template<class Model>
-class SingleGridAlgorithm {
+class SingleGridAlgorithm : public AlgorithmBase<Model> {
     public:
     /*! Construct a SingleGridAlgorithm instance
         \param grid_side number of points for each side of the grid
@@ -33,7 +34,7 @@ class SingleGridAlgorithm {
         - `y_grid`: matrix with the coordinates of grid points in the space of the covariates
         - `p_values`: p-values corresponding to those grid points
     */
-    static MatrixXd run_on_grid(
+    virtual MatrixXd run_on_grid(
         const Model & initial_model,
         const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat,
         const Grid & grid
@@ -53,7 +54,7 @@ class SingleGridAlgorithm {
     List run(
         const Model & model,
         const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat
-    ) const;
+    ) override;
 
     private:
     int grid_side;
@@ -132,7 +133,7 @@ template<class Model>
 List SingleGridAlgorithm<Model>::run(
     const Model & model,
     const MatrixXd & X, const MatrixXd & Y, const MatrixXd & Xhat
-) const {
+) {
     const VectorXd ylim = grid_param * Y.array().abs().colwise().maxCoeff();
     const Grid grid(-ylim, ylim, grid_side);
     MatrixXd p_values = run_on_grid(model, X, Y, Xhat, grid);

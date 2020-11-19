@@ -93,8 +93,8 @@ Inheritance diagram for MultiGridAlgorithm&lt; Model &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2348c6796bc3c9cecac2ee6abd9825cd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiGridAlgorithm.html#a2348c6796bc3c9cecac2ee6abd9825cd">MultiGridAlgorithm</a> (const VectorXd &amp;_grid_levels, const VectorXd &amp;_grid_sides, double _initial_grid_param, const <a class="el" href="classSingleGridAlgorithm.html">SingleGridAlgorithm</a>&lt; Model &gt; &amp;_inner_algorithm, bool _print_progress=false)</td></tr>
-<tr class="separator:a2348c6796bc3c9cecac2ee6abd9825cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0aeb6becd99ef86fb637457b2b76538e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiGridAlgorithm.html#a0aeb6becd99ef86fb637457b2b76538e">MultiGridAlgorithm</a> (const VectorXd &amp;_grid_levels, const VectorXd &amp;_grid_sides, double _initial_grid_param, std::unique_ptr&lt; <a class="el" href="classSingleGridAlgorithm.html">SingleGridAlgorithm</a>&lt; Model &gt;&gt; _inner_algorithm, bool _print_progress=false)</td></tr>
+<tr class="separator:a0aeb6becd99ef86fb637457b2b76538e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab34b04b89793564518a9013010f202ab"><td class="memItemLeft" align="right" valign="top">List&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiGridAlgorithm.html#ab34b04b89793564518a9013010f202ab">run</a> (const Model &amp;model, const MatrixXd &amp;X, const MatrixXd &amp;Y, const MatrixXd &amp;Xhat) override</td></tr>
 <tr class="separator:ab34b04b89793564518a9013010f202ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -109,8 +109,8 @@ class MultiGridAlgorithm&lt; Model &gt;</h3>
 
 <p>Implementation of a multi-grid conformal algorithm. It uses an "inner" single-grid algorithm at each step to recursively select a subgrid. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a2348c6796bc3c9cecac2ee6abd9825cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2348c6796bc3c9cecac2ee6abd9825cd">&#9670;&nbsp;</a></span>MultiGridAlgorithm()</h2>
+<a id="a0aeb6becd99ef86fb637457b2b76538e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0aeb6becd99ef86fb637457b2b76538e">&#9670;&nbsp;</a></span>MultiGridAlgorithm()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -141,7 +141,7 @@ template&lt;class Model &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classSingleGridAlgorithm.html">SingleGridAlgorithm</a>&lt; Model &gt; &amp;&#160;</td>
+          <td class="paramtype">std::unique_ptr&lt; <a class="el" href="classSingleGridAlgorithm.html">SingleGridAlgorithm</a>&lt; Model &gt;&gt;&#160;</td>
           <td class="paramname"><em>_inner_algorithm</em>, </td>
         </tr>
         <tr>
@@ -167,7 +167,7 @@ template&lt;class Model &gt; </div>
     <tr><td class="paramname">grid_levels</td><td>minimum value of p-values to use at each grid refinement </td></tr>
     <tr><td class="paramname">grid_sides</td><td>number of points for each side of the grid, for each grid refinement (must be one item longer than grid_levels) </td></tr>
     <tr><td class="paramname">initial_grid_param</td><td>determines the initial size of the grid </td></tr>
-    <tr><td class="paramname">inner_algorithm</td><td>inner algorithm to use </td></tr>
+    <tr><td class="paramname">inner_algorithm</td><td>inner algorithm to use (std::unique_ptr) </td></tr>
     <tr><td class="paramname">print_progress</td><td>print to stdout every run of the inner algorithm. </td></tr>
   </table>
   </dd>

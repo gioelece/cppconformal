@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['multigridalgorithm_55',['MultiGridAlgorithm',['../classMultiGridAlgorithm.html#a2348c6796bc3c9cecac2ee6abd9825cd',1,'MultiGridAlgorithm']]]
+  ['multigridalgorithm_55',['MultiGridAlgorithm',['../classMultiGridAlgorithm.html#a0aeb6becd99ef86fb637457b2b76538e',1,'MultiGridAlgorithm']]]
 ];

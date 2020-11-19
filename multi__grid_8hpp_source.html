@@ -90,16 +90,16 @@ $(function() {
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> Model&gt;</div>
 <div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="classMultiGridAlgorithm.html">   13</a></span>&#160;<span class="keyword">class </span><a class="code" href="classMultiGridAlgorithm.html">MultiGridAlgorithm</a> : <span class="keyword">public</span> <a class="code" href="classAlgorithmBase.html">AlgorithmBase</a>&lt;Model&gt; {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classMultiGridAlgorithm.html#a2348c6796bc3c9cecac2ee6abd9825cd">   23</a></span>&#160;    <a class="code" href="classMultiGridAlgorithm.html#a2348c6796bc3c9cecac2ee6abd9825cd">MultiGridAlgorithm</a>(</div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classMultiGridAlgorithm.html#a0aeb6becd99ef86fb637457b2b76538e">   23</a></span>&#160;    <a class="code" href="classMultiGridAlgorithm.html#a0aeb6becd99ef86fb637457b2b76538e">MultiGridAlgorithm</a>(</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">const</span> VectorXd &amp; _grid_levels, <span class="keyword">const</span> VectorXd &amp; _grid_sides,</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keywordtype">double</span> _initial_grid_param,</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        <span class="keyword">const</span> <a class="code" href="classSingleGridAlgorithm.html">SingleGridAlgorithm&lt;Model&gt;</a> &amp; _inner_algorithm,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        std::unique_ptr&lt;<a class="code" href="classSingleGridAlgorithm.html">SingleGridAlgorithm&lt;Model&gt;</a>&gt; _inner_algorithm,</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        <span class="keywordtype">bool</span> _print_progress = <span class="keyword">false</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    ) : </div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        grid_levels(_grid_levels), grid_sides(_grid_sides),</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        initial_grid_param(_initial_grid_param),</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        print_progress(_print_progress),</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        inner_algorithm(std::make_unique&lt;<a class="code" href="classSingleGridAlgorithm.html">SingleGridAlgorithm</a>&lt;Model&gt;&gt;(_inner_algorithm))</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        inner_algorithm(std::move(_inner_algorithm))</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    {};</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        </div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> <a class="code" href="classGrid.html">Grid</a> <a class="code" href="classMultiGridAlgorithm.html#a9b12f9da7fe9e6c4885ee937c2c8e348">create_new_grid_from_pvalues</a>(</div>
@@ -217,7 +217,7 @@ $(function() {
 <div class="ttc" id="aclassGrid_html_a4cd8169c1119eb9cf8000e386e075a7b"><div class="ttname"><a href="classGrid.html#a4cd8169c1119eb9cf8000e386e075a7b">Grid::get_point</a></div><div class="ttdeci">VectorXd get_point(int point_idx) const</div><div class="ttdef"><b>Definition:</b> grid.cpp:12</div></div>
 <div class="ttc" id="aclassGrid_html_a0313d9eaf640c0c098a7c73ac0da9ff3"><div class="ttname"><a href="classGrid.html#a0313d9eaf640c0c098a7c73ac0da9ff3">Grid::collect</a></div><div class="ttdeci">MatrixXd collect() const</div><div class="ttdef"><b>Definition:</b> grid.cpp:23</div></div>
 <div class="ttc" id="asingle__grid_8hpp_html"><div class="ttname"><a href="single__grid_8hpp.html">single_grid.hpp</a></div></div>
-<div class="ttc" id="aclassMultiGridAlgorithm_html_a2348c6796bc3c9cecac2ee6abd9825cd"><div class="ttname"><a href="classMultiGridAlgorithm.html#a2348c6796bc3c9cecac2ee6abd9825cd">MultiGridAlgorithm::MultiGridAlgorithm</a></div><div class="ttdeci">MultiGridAlgorithm(const VectorXd &amp;_grid_levels, const VectorXd &amp;_grid_sides, double _initial_grid_param, const SingleGridAlgorithm&lt; Model &gt; &amp;_inner_algorithm, bool _print_progress=false)</div><div class="ttdef"><b>Definition:</b> multi_grid.hpp:23</div></div>
+<div class="ttc" id="aclassMultiGridAlgorithm_html_a0aeb6becd99ef86fb637457b2b76538e"><div class="ttname"><a href="classMultiGridAlgorithm.html#a0aeb6becd99ef86fb637457b2b76538e">MultiGridAlgorithm::MultiGridAlgorithm</a></div><div class="ttdeci">MultiGridAlgorithm(const VectorXd &amp;_grid_levels, const VectorXd &amp;_grid_sides, double _initial_grid_param, std::unique_ptr&lt; SingleGridAlgorithm&lt; Model &gt;&gt; _inner_algorithm, bool _print_progress=false)</div><div class="ttdef"><b>Definition:</b> multi_grid.hpp:23</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20

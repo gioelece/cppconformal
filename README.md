@@ -10,6 +10,8 @@ devtools::install_github('gioelece/cppconformal')
 
 ## How to use
 
+To read the documentation, including this README with well-formatted math, go to https://gioelece.github.io/cppconformal/.
+
 The library exports in R the following functions:
 ```R
 run_linear_conformal_single_grid(X, y, Xhat, grid_side, grid_param)
@@ -25,7 +27,7 @@ To sample the response space, for the `single_grid` function family, a uniform g
 
 Instead, when using a `*_multi_grid` function, an initial "coarse" grid is created as before, with parameters `initial_grid_param` and `grid_sides[0]`. Then a subgrid of size `grid_sides[1]` is created to contain all the points (from the previous grid) where the value of $p$ is greater or equal than `grid_levels[0]`, and so on, for all the elements of `grid_levels`. Note that, in order to use these functions, one needs to have a single `Xhat`, i.e. $n_0 = 1$.
 
-Let $g = grid_side ^ d$ be the total number of grid points. The functions return a R list with `grid` ($g \times d$), containing the sampled points, and `p_values` ($n_0 \times g$), containing the corresponding p-values for each `Xhat`. For `*_multi_grid` functions, only the values referring to the last grid are returned.
+Let $G = \text{grid_side} ^ d$ be the total number of grid points. The functions return a R list with `grid` ($G \times d$), containing the sampled points, and `p_values` ($n_0 \times G$), containing the corresponding p-values for each `Xhat`. For `*_multi_grid` functions, only the values referring to the last grid are returned, but the grid history is added as `y_grid_parameters`.
 
 **Remark**: the intercept coefficient is not included in the prediction. To have a "typical" linear regression, one needs to add to `X` a column of ones.
 

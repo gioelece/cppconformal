@@ -17,19 +17,19 @@ class MultiGridAlgorithm : public AlgorithmBase<Model> {
         \param grid_sides number of points for each side of the grid, for each grid refinement
             (must be one item longer than grid_levels)
         \param initial_grid_param determines the initial size of the grid
-        \param inner_algorithm inner algorithm to use
+        \param inner_algorithm inner algorithm to use (std::unique_ptr)
         \param print_progress print to stdout every run of the inner algorithm.
     */
     MultiGridAlgorithm(
         const VectorXd & _grid_levels, const VectorXd & _grid_sides,
         double _initial_grid_param,
-        const SingleGridAlgorithm<Model> & _inner_algorithm,
+        std::unique_ptr<SingleGridAlgorithm<Model>> _inner_algorithm,
         bool _print_progress = false
     ) : 
         grid_levels(_grid_levels), grid_sides(_grid_sides),
         initial_grid_param(_initial_grid_param),
         print_progress(_print_progress),
-        inner_algorithm(std::make_unique<SingleGridAlgorithm<Model>>(_inner_algorithm))
+        inner_algorithm(std::move(_inner_algorithm))
     {};
         
     /*! Use the p-values from a previous run of the algorithm to identify the areas with p-values greater or equal to min_value,

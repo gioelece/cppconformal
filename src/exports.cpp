@@ -29,8 +29,8 @@ List run_linear_conformal_multi_grid(
     bool print_progress
 ) {
     LinearRegression model;
-    SingleGridAlgorithm<LinearRegression> inner_algorithm(grid_sides[0], initial_grid_param);
-    MultiGridAlgorithm<LinearRegression> algorithm(grid_levels, grid_sides, initial_grid_param, inner_algorithm, print_progress);
+    auto inner_algorithm = std::make_unique<SingleGridAlgorithm<LinearRegression>>(grid_sides[0], initial_grid_param);
+    MultiGridAlgorithm<LinearRegression> algorithm(grid_levels, grid_sides, initial_grid_param, std::move(inner_algorithm), print_progress);
     return algorithm.run(model, X, Y, Xhat);
 }
 
@@ -41,7 +41,7 @@ List run_ridge_conformal_multi_grid(
     bool print_progress
 ) {
     RidgeRegression model(lambda);
-    SingleGridAlgorithm<RidgeRegression> inner_algorithm(grid_sides[0], initial_grid_param);
-    MultiGridAlgorithm<RidgeRegression> algorithm(grid_levels, grid_sides, initial_grid_param, inner_algorithm, print_progress);
+    auto inner_algorithm = std::make_unique<SingleGridAlgorithm<RidgeRegression>>(grid_sides[0], initial_grid_param);
+    MultiGridAlgorithm<RidgeRegression> algorithm(grid_levels, grid_sides, initial_grid_param, std::move(inner_algorithm), print_progress);
     return algorithm.run(model, X, Y, Xhat);
 }

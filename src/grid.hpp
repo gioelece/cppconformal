@@ -1,3 +1,4 @@
+/*! @file */
 #ifndef __GRID_HPP
 #define __GRID_HPP
 #include <vector>

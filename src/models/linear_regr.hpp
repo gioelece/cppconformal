@@ -1,3 +1,4 @@
+/*! @file */
 #ifndef __LINEAR_REGR_HPP
 #define __LINEAR_REGR_HPP
 #include <RcppEigen.h>
